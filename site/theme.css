@@ -60,3 +60,4 @@ ul.dir{list-style:none;padding:0}ul.dir li{padding:.5rem 0;border-bottom:1px sol
 .card:has(.noph) .meta h3{-webkit-line-clamp:2;margin:2px 0}
 .card:has(.noph) .meta .price{margin:0}
 .card:has(.noph) .atc{flex:0 0 auto;width:auto;padding:0 14px;margin:0;white-space:nowrap}
+.noph .t2{opacity:1;color:#6b5634!important}

@@ -102,13 +102,13 @@ def _label(S, x):
     return ' \u00b7 '.join(E(v) for v in (i.get('species'), i.get('loc'), i.get('meas')) if v)
 def plate(S, x, eager=False):
     u = x['images'][0]
-    return (f'<a class="plate" href="/products/{x["handle"]}/"><div class="pimg"><img {"fetchpriority=\"high\" " if eager else "loading=\"lazy\" "}decoding="async" src="{S.img(u, 900)}" srcset="{S.srcset(u, (500, 700, 900, 1200))}" sizes="(min-width:1000px) 33vw,(min-width:640px) 50vw,100vw" alt="{E(x["title"])}" width="900" height="900"></div>'
+    return (f'<a class="plate" href="/products/{x["handle"]}/"><div class="pimg"><img {"fetchpriority=\"high\" " if eager else "loading=\"lazy\" "}decoding="async" src="{S.img(u, 900)}" srcset="{S.srcset(u, (360, 500, 700, 900, 1200))}" sizes="(min-width:1000px) 33vw,(min-width:640px) 50vw,calc(100vw - 36px)" alt="{E(x["title"])}" width="900" height="900"></div>'
             f'<div class="plabel"><span class="lab">{_label(S, x) or E(AISLES[x["aisle"]][1])}</span><h3>{E(x["title"])}</h3><p class="price">{S.money(x["price"])}</p></div></a>')
 def HOME_BODY(S):
     fin = _finest(S)
     head = (f'<section class="galhead"><div class="wrap"><p class="eyebrow">The collection</p><h1>Fine minerals, finest first</h1>'
             f'<p>{S.N} natural specimens and display pieces, shown from the most important down. Every piece is real stock at <a href="{S.SHOP}">Namaste Bookshop</a>, 2 W 14th St, New York.</p></div></section>')
-    g1 = '<section class="wrap"><h2 class="sr">Featured pieces</h2><div class="plates">' + ''.join(plate(S, x, i < 2) for i, x in enumerate(fin[:9])) + '</div><p class="more"><a class="btn" href="/shop/?sort=hi">See the whole collection</a></p></section>'
+    g1 = '<section class="wrap"><h2 class="sr">Featured pieces</h2><div class="plates">' + ''.join(plate(S, x, i < 1) for i, x in enumerate(fin[:9])) + '</div><p class="more"><a class="btn" href="/shop/?sort=hi">See the whole collection</a></p></section>'
     sp = sorted([(k, n) for k, n in S.fam_count.items() if n >= 2], key=lambda kv: -kv[1])
     chips = ''.join(f'<a class="chip" href="/minerals/{k}/">{E(S.FAM_NAME[k])} <small>{n}</small></a>' for k, n in sp)
     locs = ''.join(f'<a class="chip" href="/localities/{k}/">{E(S.BRAND_NAME[k])} <small>{n}</small></a>' for k, n in S.brand_count.most_common())
