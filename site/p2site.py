@@ -1,0 +1,23 @@
+"""Find-us and sales copy for namastefineminerals.com. Written for this site only."""
+COPY = {
+ 'og_tag': 'Collector mineral specimens, shown finest first',
+ 'bar': 'Held at Namaste Bookshop, 2 W 14th St &middot; Pickup or delivery',
+ 'foot': 'Specimens are kept at Namaste Bookshop on the south side of West 14th Street, a few doors from Fifth Avenue. Call ahead to have a piece set out.',
+ 'cta': ('See the collection', '/shop/?sort=hi'), 'heroloc': '',
+ 'badges': [('Natural specimens', 'Mineralogy, not folklore'), ('Locality only when stated', 'Nothing guessed'), ('See it first', 'View in Manhattan before buying'), ('Shopify checkout', 'Through namastebookshop.com')],
+ 'chips_title': 'Minerals', 'chips': [], 'best': None, 'gift': None,
+ 'set_sub': 'Other pieces from the same room of the collection.',
+ 'popular': [('Minerals A to Z', '/minerals/'), ('$500 and up', '/collector-pieces-500-and-up/'), ('Matrix specimens', '/shop/matrix-multi-mineral-specimens/'), ('Localities', '/localities/'), ('Size classes', '/guide/specimen-size-classes/')],
+ 'visit_title': 'View or Collect Specimens at 2 W 14th St, Manhattan',
+ 'visit_desc': 'Namaste Fine Minerals specimens are held at Namaste Bookshop, 2 West 14th Street near Union Square. How to arrange a viewing, walking routes and pickup.',
+ 'visit_h1': 'Viewing and collecting a specimen',
+ 'visit_lead': 'Namaste Fine Minerals is an online showcase. The specimens themselves are kept at <b>Namaste Bookshop</b>, 2 West 14th Street, where you can view a piece or collect your order.',
+ 'sign': 'Find the Namaste Bookshop sign on the south side of 14th Street near the Fifth Avenue corner. Ask at the counter for the mineral you called about, or for your pickup.',
+ 'union': ['Take the 4, 5, 6, L, N, Q, R or W to <b>14 St&ndash;Union Square</b>.', 'Go west on 14th Street, crossing Fifth Avenue.', 'On the south side of the street the shop comes up almost at once, about 4 minutes from the station.'],
+ 'sixth': ['Exit at <b>14 St / 6 Av</b> (F, M, L) or <b>14 St</b> (1, 2, 3).', 'Walk east on the south side of 14th Street.', 'Stop just short of Fifth Avenue; roughly a 4-minute walk.'],
+ 'pickup_intro': 'For pickup, choose Pickup at checkout and wait for the ready email. To view a piece first, call ahead.',
+ 'vfaq': [('Do I need an appointment to see a specimen?', 'Not strictly, but call 212-645-0141 first so the piece can be ready for you.'),
+          ('Is there a separate minerals gallery?', 'No. The specimens are held at Namaste Bookshop, 2 West 14th Street.'),
+          ('How long until a pickup order is ready?', 'Usually about 2 hours; wait for the ready email.'),
+          ('Can I bring a large piece home on the subway?', 'Small and cabinet pieces travel fine in a box. For large cabinet pieces, plan for a car.')],
+ 'llms': 'Online showcase of collector mineral specimens and display pieces (matrix and multi-mineral specimens, crystal groups and geodes, single crystals, polished slices, tektites such as moldavite, large display pieces), sorted finest first and browsable by mineral species, stated locality, size class and price. Mineralogy facts only; no healing claims. Checkout on Shopify through namastebookshop.com; ships from New York City or view and collect at Namaste Bookshop, 2 W 14th St.'}

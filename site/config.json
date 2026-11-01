@@ -1,0 +1,23 @@
+{
+ "brand": "Namaste Fine Minerals",
+ "short_name": "Fine Minerals",
+ "site_url": "https://namastefineminerals.com",
+ "storefront": "Namaste Fine Minerals",
+ "store_type": "Store",
+ "bestseller_collections": [
+  "crystal-specimens",
+  "cluster-geode",
+  "gallery-pieces"
+ ],
+ "theme": {
+  "ink": "#111417",
+  "paper": "#f4f2ed",
+  "accent": "#b8955a",
+  "fonts": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;600;700&display=swap"
+ },
+ "REVIEW_URL": "",
+ "GOOGLE_SITE_VERIFICATION": "",
+ "siblings": [],
+ "include_no_photo": false,
+ "GA_MEASUREMENT_ID": "G-Y7R5K9NMW0"
+}
