@@ -36,6 +36,7 @@ AISLES = {
  'single':   ('Single Crystals & Natural Rough', 'Single crystals', 'single-crystals-natural-rough', 'Individual crystals and natural rough, as the ground gave them up.', '#5a7a5a'),
  'polished': ('Slices, Slabs & Polished Faces', 'Slices & slabs', 'slices-slabs-polished-faces', 'Cut and polished faces that open up banding, stalactite rings and internal structure.', '#8a3b4b'),
  'rare':     ('Tektites & Rare Materials', 'Rare materials', 'tektites-rare-materials', 'Moldavite and other natural glasses, and uncommon materials such as elite shungite.', '#2f5a4a'),
+ 'treated':  ('Aura & Coated Quartz', 'Aura quartz', 'aura-coated-quartz', 'Natural quartz clusters given a thin metal-vapor coating in a lab, which makes the rainbow, blue or gold sheen. The crystals are real; the color is added, and we label it that way.', '#3b6a8a'),
  'display':  ('Statement Display Pieces', 'Display pieces', 'statement-display-pieces', 'Large polished towers, spheres and free forms priced as centerpieces.', '#5a4b7a'),
 }
 def CARD_TAG(x):
@@ -101,13 +102,13 @@ def _label(S, x):
     return ' \u00b7 '.join(E(v) for v in (i.get('species'), i.get('loc'), i.get('meas')) if v)
 def plate(S, x, eager=False):
     u = x['images'][0]
-    return (f'<a class="plate" href="/products/{x["handle"]}/"><div class="pimg"><img {"" if eager else "loading=\"lazy\" "}src="{S.img(u, 900)}" srcset="{S.srcset(u, (500, 700, 900, 1200))}" sizes="(min-width:1000px) 33vw,(min-width:640px) 50vw,100vw" alt="{E(x["title"])}" width="900" height="900"></div>'
+    return (f'<a class="plate" href="/products/{x["handle"]}/"><div class="pimg"><img {"fetchpriority=\"high\" " if eager else "loading=\"lazy\" "}decoding="async" src="{S.img(u, 900)}" srcset="{S.srcset(u, (500, 700, 900, 1200))}" sizes="(min-width:1000px) 33vw,(min-width:640px) 50vw,100vw" alt="{E(x["title"])}" width="900" height="900"></div>'
             f'<div class="plabel"><span class="lab">{_label(S, x) or E(AISLES[x["aisle"]][1])}</span><h3>{E(x["title"])}</h3><p class="price">{S.money(x["price"])}</p></div></a>')
 def HOME_BODY(S):
     fin = _finest(S)
     head = (f'<section class="galhead"><div class="wrap"><p class="eyebrow">The collection</p><h1>Fine minerals, finest first</h1>'
             f'<p>{S.N} natural specimens and display pieces, shown from the most important down. Every piece is real stock at <a href="{S.SHOP}">Namaste Bookshop</a>, 2 W 14th St, New York.</p></div></section>')
-    g1 = '<section class="wrap"><div class="plates">' + ''.join(plate(S, x, i < 2) for i, x in enumerate(fin[:9])) + '</div><p class="more"><a class="btn" href="/shop/?sort=hi">See the whole collection</a></p></section>'
+    g1 = '<section class="wrap"><h2 class="sr">Featured pieces</h2><div class="plates">' + ''.join(plate(S, x, i < 2) for i, x in enumerate(fin[:9])) + '</div><p class="more"><a class="btn" href="/shop/?sort=hi">See the whole collection</a></p></section>'
     sp = sorted([(k, n) for k, n in S.fam_count.items() if n >= 2], key=lambda kv: -kv[1])
     chips = ''.join(f'<a class="chip" href="/minerals/{k}/">{E(S.FAM_NAME[k])} <small>{n}</small></a>' for k, n in sp)
     locs = ''.join(f'<a class="chip" href="/localities/{k}/">{E(S.BRAND_NAME[k])} <small>{n}</small></a>' for k, n in S.brand_count.most_common())
@@ -168,7 +169,7 @@ REL_SCENT = 'More {scent}'
 REL_PAIR = 'Similar pieces'
 REL_MORE = 'More {aisle}'
 _KIND = {'clusters': 'crystal group or geode', 'matrix': 'specimen on matrix or with several minerals together', 'single': 'single crystal or natural rough piece', 'polished': 'cut and polished piece',
-         'rare': 'rare natural material', 'display': 'polished display piece'}
+         'rare': 'rare natural material', 'treated': 'coated quartz cluster', 'display': 'polished display piece'}
 def describe(S, x):
     i = INFO.get(x['handle'], {}); k = x['family']; s = [f"{E(x['title'])}: a {_KIND[x['aisle']]} in the Namaste Fine Minerals collection."]
     if i.get('loc'): s.append(f"The listing names {E(i['loc'])} as its locality.")
@@ -176,15 +177,32 @@ def describe(S, x):
     if k in NOTES:
         chem, sysm, mohs, note = NOTES[k]
         s.append(f'{E(S.FAM_NAME[k])} is {E(chem)}, {E(sysm)}, Mohs {E(mohs)}. {E(note)} <a href="/minerals/{k}/">All {E(S.FAM_NAME[k].lower())}</a>.')
-    s.append('Natural specimens are one of a kind; the photo shows the type of piece, so ask us if you want a closer look before buying.')
+    s.append(f'This piece has not been photographed yet. Call {S.PHONE} and the shop can describe it or send a picture before you buy.' if x['noimg'] else 'Natural specimens are one of a kind; the photo shows the type of piece, so ask us if you want a closer look before buying.')
     s.append(f'Ships from New York City, or see and collect it inside Namaste Bookshop, 2 West 14th Street. Questions: call {S.PHONE}.')
     return s
 def PRODUCT_DESC(S, x, v0):
     i = INFO.get(x['handle'], {})
     return f"{x['title']}, {S.money(v0['price'])}." + (f" {i['species']}." if i.get('species') else '') + (f" Locality: {i['loc']}." if i.get('loc') else '') + ' Collector specimen from Namaste Fine Minerals, NYC.'
+def _weight(x):
+    t = x['title'] + ' ' + re.sub('<[^>]+>', ' ', x.get('raw_body') or '')[:1500]
+    m = re.search(r'(\d+(?:\.\d+)?)\s*(?:-|to)\s*(\d+(?:\.\d+)?)\s*(?:grams?|gms?|g)\b', t, re.I)
+    if m: return f'{m.group(1)} to {m.group(2)} g'
+    m = re.search(r'(\d+(?:\.\d+)?)\s*(kg|kilograms?|kilos?)\b', t, re.I)
+    if m: return f'{m.group(1)} kg'
+    m = re.search(r'(?<![\w.])(\d+(?:\.\d+)?)\s*(?:grams?|gms?|g)\b', t, re.I)
+    return f'{m.group(1)} g' if m else ''
+def _dims(x):
+    t = x['title'] + ' ' + re.sub('<[^>]+>', ' ', x.get('raw_body') or '')[:1500]
+    m = re.search(r'(\d+(?:\.\d+)?\s*[x\u00d7]\s*\d+(?:\.\d+)?(?:\s*[x\u00d7]\s*\d+(?:\.\d+)?)?)\s*(cm|mm|in|inch(?:es)?|")', t, re.I)
+    if m: return f"{m.group(1).replace(' ', '')} {'in' if m.group(2) in ('"', 'inch', 'inches') else m.group(2).lower()}"
+    m = re.search(r'(\d+(?:\.\d+)?\s*(?:-|to)\s*\d+(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?:"|\u201d|\u2033|in\b|inch(?:es)?\b)', x['title'], re.I)
+    return f'{m.group(1).replace(" ", "")} in' if m else ''
 def FACTS_EXTRA(S, x, v0):
     i = INFO.get(x['handle'], {}); f = []
-    if i.get('meas'): f.append(('Stated size', E(i['meas'])))
+    d, w = _dims(x), _weight(x)
+    if d: f.append(('Dimensions', E(d)))
+    if w: f.append(('Weight', E(w)))
+    if i.get('meas') and not d and not w: f.append(('Stated size', E(i['meas'])))
     if v0['sku']: f.append(('Stock no.', E(v0['sku'])))
     return f
 def LD_EXTRA(S, x, v0):
@@ -234,3 +252,32 @@ def ICON_DRAW(d, s, th):
     w = max(2, int(2 * s))
     d.line([(8*s, 30*s), (14*s, 13*s), (21*s, 19*s), (26*s, 8*s), (32*s, 30*s), (8*s, 30*s)], fill=th['accent'], width=w, joint='curve')
     d.line([(4*s, 33*s), (36*s, 33*s)], fill=th['paper'], width=max(1, int(1.6*s)))
+
+# ---- presentation pass hooks ----
+import present as _PR
+GROUP_BY_TITLE = False          # every specimen is its own piece, never folded into "options"
+DESC_MODE = 'mineral'           # original listing text, with health and metaphysical-property lines removed
+DESC_HEAD = 'From the listing'
+PH_LABEL = 'Photo on request'
+PH_CLASS = 'label'
+CARD_PICKUP = False
+def DISPLAY_TITLE(x):
+    t = _PR.clean_title(x['title'])
+    t = re.sub(r'\s*[,(-]?\s*\d+(?:\.\d+)?\s*(?:-|to)?\s*\d*(?:\.\d+)?\s*(?:grams?|gms?|g)\b\.?(?:\s*approx\.?)?\)?', '', t, flags=re.I)
+    t = re.sub(r'\s*\(per title\)|\s+approx\.?$', '', t, flags=re.I)
+    t = re.sub(r'\s*[-\u2013,]\s*$', '', t).strip()
+    return t or x['title']
+def PH_LINES(x):
+    i = INFO.get(x['handle'], {})
+    return [(x['ctitle'], 't1'), (' \u00b7 '.join(v for v in (i.get('species'), i.get('loc')) if v), 't2')]
+def H1_SUB(S, x):
+    i = INFO.get(x['handle'], {}); bits = []
+    if x['family']: bits.append(f'<a href="/minerals/{x["family"]}/">{E(S.FAM_NAME[x["family"]])}</a>')
+    if x['brand']: bits.append(f'<a href="/localities/{x["brand"]}/">{E(S.BRAND_NAME[x["brand"]])}</a>')
+    elif i.get('loc'): bits.append(E(i['loc']))
+    return ' &middot; '.join(bits)
+PH_HEAD = 'In the cases, not yet photographed'
+
+PK_LABEL = 'Available for store pickup'
+PH_FILTER = 'Photographed pieces only'
+INSTOCK_NOTE = 'Each specimen listed is in the cases now; the list updates daily.'

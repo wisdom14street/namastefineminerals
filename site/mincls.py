@@ -2,9 +2,9 @@ import re
 SPEC_TYPES = {'Crystals Specimens', 'Crystal specimen', 'Crystal Specimen', 'Crystal specime', 'Clusters Crystal', 'Crystal Geode', 'Enhydro Quartz', 'Gallery Pieces Crystals Stones',
               'Crystal Polished Slabs, POF, Irregular', 'Crystal Polished Slabs, POF', 'Crystals Slabs POF', 'Crystal Rough Raw', 'Crystals', 'Crystal', 'Stones', 'Polished Crystal',
               'Naturally Polished Faceted Crystal', 'Fossils Crystal', 'Cutbase Cluster / Point', 'Top Polished Cut Base'}
-DISPLAY_TYPES = {'Crystal Tower Obeliak', 'Crystal Tower Obeliak Generator', 'Crystal Sphere', 'Free Form Crystals', 'Crystal Points', 'Crystal Carving', 'Crystal Eggs',
+DISPLAY_TYPES = {'Crystal Tower Obeliak', 'Crystal Tower Obeliak Generator', 'Crystal Tower Obelisk', 'Crystal Tower Obelisk Generator', 'CrystalS Point', 'Cut Base Crystal Point', 'Crystal D/T Stones Points', 'Crystal Sphere', 'Free Form Crystals', 'Crystal Points', 'Crystal Carving', 'Crystal Eggs',
                  'Aura Quartz Points, Cluster, Tower', 'Pyramid'}
-NOT_MIN = re.compile(r'ring\b|pendant|bracelet|necklace|earring|bead|\bmala\b|chain|charm|keychain|candle|incense|oil\b|spray|soap|book|deck|card|pouch|bag\b|stand\b|holder|lamp|tumbled|tumble|worry|palm ?stone|gallet|chip|orgon|pyramid|aura\b|angel aura|titanium|dyed|reiki|chakra|massage|gua sha|wand|roller|grid|tree|bottle|dish|bowl|statue|skull|heart|angel|buddha|carving|animal|kit|set\b|assorted|bundle|lot\b|grab|mystery', re.I)
+NOT_MIN = re.compile(r'\b(?:ring|pendant|bracelet|necklace|earring|bead|mala|chain|charm|keychain|candle|incense|oil|spray|soap|book|deck|card|pouch|bag|stand|holder|lamp|tumbled|tumble|worry|palm ?stone|gallet|chip|orgon\w*|pyramid|aura|titanium|dyed|reiki|chakra|massage|gua sha|wand|roller|grid|tree|bottle|dish|bowl|statue|skull|heart|angel|buddha|carving|carved|animal|kit|set|assorted|bundle|lot|grab|mystery|coral|with hole)(?:e?s)?\b', re.I)
 SPECIES = [('Kunzite & Spodumene', r'kunzite|spodumene|hiddenite'), ('Dioptase', r'dioptase'), ('Azurite & Malachite', r'azurite|malachite'), ('Chrysocolla', r'chrysocolla'),
  ('Shattuckite', r'shattuckite'), ('Rhodochrosite', r'rhodochrosite'), ('Barite', r'barite|baryte'), ('Chalcopyrite', r'chalcopyrite'), ('Pyrite', r'pyrite'), ('Hematite', r'hematite|iron rose'),
  ('Fluorite', r'fluorite'), ('Calcite', r'calcite'), ('Aragonite', r'aragonite'), ('Celestite', r'celestite|celestine'), ('Apophyllite', r'apophyllite'), ('Stilbite', r'stilbite'),
@@ -32,10 +32,15 @@ def kind_of(p):
     t, ty = p['title'], p.get('product_type', '') or ''
     price = min([float(v['price']) for v in p['variants'] if v['available'] and float(v['price']) > 0] or [0])
     if not price: return None
+    if re.search(r'\bcoral\b|with hole|\bdyed\b', t, re.I): return None
+    if ty == 'Aura Quartz Points, Cluster, Tower' or re.search(r'\baura\b', t, re.I):
+        # vapor-coated quartz: shown in its own clearly labeled aisle, clusters and specimens only
+        return 'treated' if price >= 25 and re.search(r'cluster|specimen|geode|druz', t, re.I) and not re.search(r'pendant|ring|bracelet|necklace|tower|wand|heart', t, re.I) else None
     if NOT_MIN.search(t) and not re.search(r'specimen|cluster|geode|matrix', t, re.I): return None
     if ty in SPEC_TYPES:
         if price < 25: return None
     elif ty in DISPLAY_TYPES:
+        if re.search(r'cluster', t, re.I) and price >= 25 and not re.search(r'carv|skull|heart|egg|animal|angel|buddha|orgon|pyramid|tower|sphere', t, re.I): return 'clusters'
         if price < 95 or re.search(r'carv|skull|heart|egg|animal|angel|buddha|orgon|aura|pyramid', t, re.I): return None
         return 'display'
     elif ty == '':
